@@ -27,6 +27,7 @@ use Blackfire\Player\Step\LoopStep;
 use Blackfire\Player\Step\ReloadStep;
 use Blackfire\Player\Step\Step;
 use Blackfire\Player\Step\SubmitStep;
+use Blackfire\Player\Step\FormStep;
 use Blackfire\Player\Step\VisitStep;
 use Blackfire\Player\Step\WhileStep;
 use Symfony\Component\ExpressionLanguage\SyntaxError;
@@ -231,7 +232,11 @@ class Parser
             }
 
             $step = new SubmitStep($this->checkExpression($input, $arguments), $input->getFile(), $input->getLine());
-        } elseif ('include' === $keyword) {
+        } elseif ('form' === $keyword) {
+            
+            $step = new FormStep($this->checkExpression($input, $arguments), $input->getFile(), $input->getLine());
+            
+        }  elseif ('include' === $keyword) {
             if (!$hasArgs) {
                 throw new SyntaxErrorException(sprintf('An "include" takes an expression as a required argument %s.', $input->getContextString()));
             }
@@ -456,8 +461,8 @@ class Parser
             } elseif ('warmup' === $keyword) {
                 $step->warmup($hasArgs ? $this->checkExpression($input, $arguments) : 'true');
             } elseif ('body' === $keyword) {
-                if (!$step instanceof VisitStep && !$step instanceof SubmitStep) {
-                    throw new LogicException(sprintf('"param" is only available for "visit" or "submit" steps %s.', $input->getContextString()));
+                if (!$step instanceof VisitStep && !$step instanceof SubmitStep && !$step instanceof FormStep) {
+                    throw new LogicException(sprintf('"param" is only available for "visit" or "submit" or "form" steps %s.', $input->getContextString()));
                 }
 
                 if (!$hasArgs) {
@@ -466,8 +471,8 @@ class Parser
 
                 $step->body($this->checkExpression($input, $arguments));
             } elseif ('param' === $keyword) {
-                if (!$step instanceof VisitStep && !$step instanceof SubmitStep) {
-                    throw new LogicException(sprintf('"param" is only available for "visit" or "submit" steps %s.', $input->getContextString()));
+                if (!$step instanceof VisitStep && !$step instanceof SubmitStep && !$step instanceof FormStep) {
+                    throw new LogicException(sprintf('"param" is only available for "visit" or "submit" or "form" steps %s.', $input->getContextString()));
                 }
 
                 if (!preg_match('/^([^\s]+)\s+(.+)$/', $arguments, $matches)) {

@@ -23,6 +23,7 @@ use Blackfire\Player\Step\ReloadStep;
 use Blackfire\Player\Step\Step;
 use Blackfire\Player\Step\StepContext;
 use Blackfire\Player\Step\SubmitStep;
+use Blackfire\Player\Step\FromStep;
 use Blackfire\Player\Step\VisitStep;
 use GuzzleHttp\Psr7;
 use GuzzleHttp\Psr7\Request;
@@ -68,6 +69,14 @@ final class StepConverter implements StepConverterInterface
         }
 
         if ($step instanceof SubmitStep) {
+            if (!$previousRequest) {
+                throw new CrawlException('Cannot submit a form without a previous request.');
+            }
+
+            return $this->createRequestFromForm($step, $stepContext);
+        }
+        
+        if ($step instanceof FromStep) {
             if (!$previousRequest) {
                 throw new CrawlException('Cannot submit a form without a previous request.');
             }
