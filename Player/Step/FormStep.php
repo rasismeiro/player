@@ -13,39 +13,47 @@ namespace Blackfire\Player\Step;
  *
  * @author sismeiro
  */
-class FormStep {
+class FormStep extends Step
+{
 
     private $selector;
     private $parameters = [];
     private $body;
 
-    public function __construct($selector, $file = null, $line = null) {
+    public function __construct($selector, $file = null, $line = null)
+    {
         $this->selector = $selector;
 
         parent::__construct($file, $line);
     }
 
-    public function __toString() {
+    public function __toString()
+    {
         return sprintf("└ %s: %s\n", get_class($this), $this->selector);
     }
 
-    public function param($key, $value) {
+    public function param($key, $value)
+    {
         $this->parameters[$key] = $value;
     }
 
-    public function body($body) {
+    public function body($body)
+    {
         $this->body = $body;
     }
 
-    public function getSelector() {
+    public function getSelector()
+    {
         return $this->selector;
     }
 
-    public function getParameters() {
+    public function getParameters()
+    {
         return $this->parameters;
     }
 
-    public function getBody() {
+    public function getBody()
+    {
         return $this->body;
     }
 
